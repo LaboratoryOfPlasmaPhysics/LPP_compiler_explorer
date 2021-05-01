@@ -1,3 +1,4 @@
+ARG JOBS=4
 FROM fedora:34
 
 
@@ -5,7 +6,8 @@ EXPOSE 10240
 
 
 # LFR stuff 
-RUN dnf install -y git cppcheck bzip2 hg automake autoconf gcc glibc.i686 zlib.i686 ncurses-compat-libs.i686 cmake gcc-c++ tcl /bin/find xz
+RUN dnf install -y --nodocs --setopt install_weak_deps=False git cppcheck bzip2 hg automake autoconf gcc glibc.i686 zlib.i686 ncurses-compat-libs.i686 cmake gcc-c++ tcl /bin/find xz \
+	&& dnf clean all -y
 
 # uses LPP mirror since it is way faster replace https://hephaistos.lpp.polytechnique.fr/data/mirrors/gaisler/ by http://www.gaisler.com/anonftp/
 ADD https://hephaistos.lpp.polytechnique.fr/data/mirrors/gaisler/rcc/bin/linux/sparc-rtems-4.10-gcc-4.4.6-1.2.25-linux.tar.bz2 /opt/
@@ -27,16 +29,16 @@ RUN cd /opt && \
     cp -r /opt/rtems-4.10 /opt/rtems-4.10-unmodified && \
     cd /opt/rtems-4.10/src && tar -xf /opt/rtems-4.10-1.2.25-src.tar.bz2 && \
     sed -i '0,/grspw_hw_reset(pDev);/s/grspw_hw_reset(pDev);/\/\/grspw_hw_reset(pDev);/' /opt/rtems-4.10/src/rtems-4.10/c/src/lib/libbsp/sparc/shared/spw/grspw.c && \
-    make -j bootstrap && \
-    make -j bootstrap_sparc && \
-    make -j configure-drvmgr && \
-    make -j compile-drvmgr && \
-    make -j install-drvmgr && \
+    make -j $JOBS bootstrap && \
+    make -j $JOBS bootstrap_sparc && \
+    make -j $JOBS configure-drvmgr && \
+    make -j $JOBS compile-drvmgr && \
+    make -j $JOBS install-drvmgr && \
     rm -f /opt/{*.bz2,*.txz,*.xz} && \
     mv /opt/rtems-4.10 /opt/rtems-4.10-LFR && \
     mv /opt/rtems-4.10-unmodified /opt/rtems-4.10
 
-RUN  dnf install -y  nodejs git make wget which python3.5.x86_64 python3.6.x86_64 nasm \
+RUN  dnf install -y --nodocs --setopt install_weak_deps=False nodejs /usr/bin/node /usr/bin/npm git make wget which python3.5.x86_64 python3.6.x86_64 nasm \
   python3.7.x86_64 python3.8.x86_64 g++ clang gcc-gfortran /usr/bin/gnat /usr/bin/javac \
   gcc-gdc ghc llvm /usr/bin/ocamlopt /usr/bin/fpc /usr/bin/rustc /usr/bin/rustfilt \
   swift-lang arm-none-eabi-gcc-cs arm-none-eabi-gcc-cs-c++ arm-none-eabi-binutils-cs \
@@ -47,7 +49,8 @@ RUN  dnf install -y  nodejs git make wget which python3.5.x86_64 python3.6.x86_6
   && cd /compiler-explorer \
   && npm i @sentry/node \
   && make webpack \
-  && rm -f /compiler-explorer/etc/config/*.properties
+  && rm -f /compiler-explorer/etc/config/*.properties \
+  && dnf clean all -y
 
 ADD config/* /compiler-explorer/etc/config/
 
