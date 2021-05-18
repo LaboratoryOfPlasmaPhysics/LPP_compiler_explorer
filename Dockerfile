@@ -6,7 +6,7 @@ EXPOSE 10240
 
 
 # LFR stuff 
-RUN dnf install -y --nodocs --setopt install_weak_deps=False git cppcheck bzip2 hg automake autoconf gcc glibc.i686 zlib.i686 ncurses-compat-libs.i686 cmake gcc-c++ tcl /bin/find xz \
+RUN dnf install -y --nodocs --setopt install_weak_deps=False git cppcheck bzip2 hg automake autoconf gcc glibc.i686 /lib/ld-linux.so.2 zlib.i686 ncurses-compat-libs.i686 cmake gcc-c++ tcl /bin/find xz \
 	&& dnf clean all -y
 
 # uses LPP mirror since it is way faster replace https://hephaistos.lpp.polytechnique.fr/data/mirrors/gaisler/ by http://www.gaisler.com/anonftp/
