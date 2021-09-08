@@ -18,6 +18,13 @@ ADD https://hephaistos.lpp.polytechnique.fr/data/mirrors/gaisler/rcc/bin/linux/s
 ADD https://hephaistos.lpp.polytechnique.fr/data/mirrors/gaisler/bcc2/bin/bcc-2.2.0-llvm-linux64.tar.xz /opt/
 ADD https://hephaistos.lpp.polytechnique.fr/data/mirrors/gaisler/bcc2/bin/bcc-2.2.0-gcc-linux64.tar.xz /opt/
 
+ADD https://www.mjr19.org.uk/sw/inode64.so /usr/lib/
+
+RUN g++ -shared -Wl,-soname -o  /usr/lib64/inode64.so && ldconfig -v 
+
+ENV LD_PRELOAD=inode64.so
+
+
 RUN cd /opt && \
     tar -xf /opt/sparc-rtems-4.10-gcc-4.4.6-1.2.25-linux.tar.bz2 && \
     tar -xf /opt/sparc-rtems-4.8-gcc-4.2.4-1.1.2-linux.tar.bz2 && \
