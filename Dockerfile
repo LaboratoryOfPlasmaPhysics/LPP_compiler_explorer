@@ -1,5 +1,5 @@
 ARG JOBS=4
-FROM fedora:34
+FROM fedora:36
 
 
 EXPOSE 10240
@@ -45,17 +45,17 @@ RUN cd /opt && \
     mv /opt/rtems-4.10 /opt/rtems-4.10-LFR && \
     mv /opt/rtems-4.10-unmodified /opt/rtems-4.10
 
-RUN  dnf install -y --nodocs --setopt install_weak_deps=False nodejs /usr/bin/node /usr/bin/npm git make wget which python3.5.x86_64 python3.6.x86_64 nasm \
-  python3.7.x86_64 python3.8.x86_64 g++ clang gcc-gfortran /usr/bin/gnat /usr/bin/javac \
+RUN  dnf install -y --nodocs --setopt install_weak_deps=False nodejs /usr/bin/node /usr/bin/npm git make wget which python3.6.x86_64 nasm \
+  python3.7.x86_64 python3.8.x86_64 python3.9.x86_64 python3.11.x86_64 g++ clang gcc-gfortran /usr/bin/gnat /usr/bin/javac \
   gcc-gdc ghc llvm /usr/bin/ocamlopt /usr/bin/fpc /usr/bin/rustc /usr/bin/rustfilt \
   swift-lang arm-none-eabi-gcc-cs arm-none-eabi-gcc-cs-c++ arm-none-eabi-binutils-cs \
   binutils-riscv64-linux-gnu gcc-c++-riscv64-linux-gnu gcc-riscv64-linux-gnu arm-none-eabi-newlib \
   ccache \
+  && dnf update -y \
   && ln -s /usr/bin/ccache /usr/lib64/ccache/arm-none-eabi-g++ \
   && git clone https://github.com/compiler-explorer/compiler-explorer.git /compiler-explorer \
   && cd /compiler-explorer \
-  && npm i @sentry/node \
-  && make webpack \
+  && make prereqs || make prereqs \
   && rm -f /compiler-explorer/etc/config/*.properties \
   && dnf clean all -y
 
