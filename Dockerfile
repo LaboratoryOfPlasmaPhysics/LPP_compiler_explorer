@@ -47,20 +47,35 @@ RUN cd /opt && \
 
 RUN  dnf install -y --nodocs --setopt install_weak_deps=False nodejs /usr/bin/node /usr/bin/npm git make wget which python3.6.x86_64 nasm \
   python3.7.x86_64 python3.8.x86_64 python3.9.x86_64 python3.11.x86_64 g++ clang gcc-gfortran /usr/bin/gnat /usr/bin/javac \
-  gcc-gdc ghc llvm /usr/bin/ocamlopt /usr/bin/fpc /usr/bin/rustc /usr/bin/rustfilt \
-  swift-lang arm-none-eabi-gcc-cs arm-none-eabi-gcc-cs-c++ arm-none-eabi-binutils-cs \
+  gcc-gdc ghc llvm /usr/bin/ocamlopt /usr/bin/fpc /usr/bin/rustc /usr/bin/rustfilt rustfmt /usr/bin/clang-format /usr/bin/gofmt \
+  swift-lang arm-none-eabi-gcc-cs arm-none-eabi-gcc-cs-c++ arm-none-eabi-binutils-cs dub \
   binutils-riscv64-linux-gnu gcc-c++-riscv64-linux-gnu gcc-riscv64-linux-gnu arm-none-eabi-newlib \
-  ccache \
+  ccache fmt-devel.x86_64 range-v3-devel.x86_64 catch-devel.x86_64 google-cpu_features-devel.x86_64 \
+  google-benchmark-devel.x86_64 unittest-cpp.x86_64 netcdf-cxx-devel.x86_64 netcdf-cxx4-devel.x86_64 log4cxx-devel.x86_64 kokkos.x86_64 \
+  jsoncpp.x86_64 json11.x86_64 gtest.x86_64 cppzmq-devel.x86_64 boost-devel.x86_64 abseil-cpp.x86_64 \
+  xeus-devel.x86_64 xsimd-devel.x86_64 xtensor-devel.x86_64 \
   && dnf update -y \
   && ln -s /usr/bin/ccache /usr/lib64/ccache/arm-none-eabi-g++ \
-  && git clone https://github.com/compiler-explorer/compiler-explorer.git /compiler-explorer \
-  && cd /compiler-explorer \
+  && dnf clean all -y \
+  && cd  && git clone https://github.com/dlang/tools && cd tools \
+  && dub build :ddemangle && mv ./rdmd.d /usr/bin/rdmd && mv ./ddemangle.d /usr/bin/ddemangle \
+  && cd .. && rm -rf tools
+  
+RUN useradd -ms /bin/bash compiler-explorer
+
+USER compiler-explorer
+
+
+RUN git clone https://github.com/compiler-explorer/compiler-explorer.git  /home/compiler-explorer/compiler-explorer \
+  && cd  /home/compiler-explorer/compiler-explorer \
+  && curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash \
+  && source ~/.bashrc && nvm install v17 \
   && make prereqs || make prereqs \
-  && rm -f /compiler-explorer/etc/config/*.properties \
-  && dnf clean all -y
+  && rm -f  /home/compiler-explorer/compiler-explorer/etc/config/*.properties 
 
-ADD config/* /compiler-explorer/etc/config/
 
-WORKDIR /compiler-explorer
+ADD config/*  /home/compiler-explorer/compiler-explorer/etc/config/
+
+WORKDIR /home/compiler-explorer/compiler-explorer
 
 CMD ["make"]
