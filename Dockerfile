@@ -63,6 +63,4 @@ ADD config/* /compiler-explorer/etc/config/
 
 WORKDIR /compiler-explorer
 
-ENTRYPOINT [ "make" ]
-
-CMD ["run"]
+CMD ["make"]
