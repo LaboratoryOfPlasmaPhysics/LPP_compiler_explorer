@@ -1,5 +1,5 @@
 ARG JOBS=4
-FROM fedora:36
+FROM fedora:38
 
 
 EXPOSE 10240
@@ -46,14 +46,15 @@ RUN cd /opt && \
     mv /opt/rtems-4.10-unmodified /opt/rtems-4.10
 
 RUN  dnf install -y --nodocs --setopt install_weak_deps=False nodejs /usr/bin/node /usr/bin/npm git make wget which python3.6.x86_64 nasm \
-  python3.7.x86_64 python3.8.x86_64 python3.9.x86_64 python3.11.x86_64 g++ clang gcc-gfortran /usr/bin/gnat /usr/bin/javac \
-  gcc-gdc ghc llvm /usr/bin/ocamlopt /usr/bin/fpc /usr/bin/rustc /usr/bin/rustfilt rustfmt /usr/bin/clang-format /usr/bin/gofmt \
+  python3.7.x86_64 python3.8.x86_64 python3.9.x86_64 python3.x86_64 g++ clang gcc-gfortran /usr/bin/gnat /usr/bin/javac \
+  gcc-gdc ghc llvm /usr/bin/ocamlopt /usr/bin/fpc /usr/bin/rustc rustfmt cargo /usr/bin/clang-format /usr/bin/gofmt \
   swift-lang arm-none-eabi-gcc-cs arm-none-eabi-gcc-cs-c++ arm-none-eabi-binutils-cs dub \
   binutils-riscv64-linux-gnu gcc-c++-riscv64-linux-gnu gcc-riscv64-linux-gnu arm-none-eabi-newlib \
   ccache fmt-devel.x86_64 range-v3-devel.x86_64 catch-devel.x86_64 google-cpu_features-devel.x86_64 \
   google-benchmark-devel.x86_64 unittest-cpp.x86_64 netcdf-cxx-devel.x86_64 netcdf-cxx4-devel.x86_64 log4cxx-devel.x86_64 kokkos.x86_64 \
   jsoncpp.x86_64 json11.x86_64 gtest.x86_64 cppzmq-devel.x86_64 boost-devel.x86_64 abseil-cpp.x86_64 \
   xeus-devel.x86_64 xsimd-devel.x86_64 xtensor-devel.x86_64 \
+  && cargo install rustfilt\
   && dnf update -y \
   && ln -s /usr/bin/ccache /usr/lib64/ccache/arm-none-eabi-g++ \
   && dnf clean all -y \
@@ -69,7 +70,7 @@ USER compiler-explorer
 RUN git clone https://github.com/compiler-explorer/compiler-explorer.git  /home/compiler-explorer/compiler-explorer \
   && cd  /home/compiler-explorer/compiler-explorer \
   && curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash \
-  && source ~/.bashrc && nvm install v17 \
+  && source ~/.bashrc && nvm install v20 \
   && make prereqs || make prereqs \
   && rm -f  /home/compiler-explorer/compiler-explorer/etc/config/*.properties 
 
