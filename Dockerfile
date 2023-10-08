@@ -18,7 +18,7 @@ ADD https://hephaistos.lpp.polytechnique.fr/data/mirrors/gaisler/rcc/bin/linux/s
 ADD https://hephaistos.lpp.polytechnique.fr/data/mirrors/gaisler/bcc2/bin/bcc-2.2.0-llvm-linux64.tar.xz /opt/
 ADD https://hephaistos.lpp.polytechnique.fr/data/mirrors/gaisler/bcc2/bin/bcc-2.2.0-gcc-linux64.tar.xz /opt/
 
-ADD https://www.mjr19.org.uk/sw/inode64.so /usr/lib/
+ADD https://hephaistos.lpp.polytechnique.fr/data/jeandet/inode64.so /usr/lib/
 
 RUN g++ -shared -Wl,-soname -o  /usr/lib64/inode64.so && ldconfig -v 
 
